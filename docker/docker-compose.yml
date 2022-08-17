@@ -1,36 +1,71 @@
-version: '3.1'
+version: '2'
 
 services:
+
   elasticsearch:
-    container_name: els
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.1
-    ports:
-      - 9200:9200
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.1
     volumes:
-      - elasticsearch-data:/usr/share/elasticsearch/datafile
-    environment:
-      - xpack.monitoring.enabled=true
-      - xpack.watcher.enabled=false
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - discovery.type=single-node
-    networks:
-      - elastcinetwork
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    mem_limit: 1g
+    environment:  
+    - xpack.monitoring.enabled=true  
+    - xpack.watcher.enabled=false  
+    - "ES_JAVA_OPTS=-Xms512m -Xmx512m"  
+    - discovery.type=single-node  
+    networks: 
+    - elastic
 
   kibana:
     container_name: kibana
-    image: docker.elastic.co/kibana/kibana:7.16.1
-    ports:
-      - 5601:5601
-    depends_on:
-      - els
+    image: docker.elastic.co/kibana/kibana:7.9.1
     environment:
-      - ELASTICSEARCH_URL=http://localhost:9200
+      - "ELASTICSEARCH_URL=http://elasticsearch:9200"
+      - server.name=kibana
+      - server.host="0"
+      - xpack.security.enabled=true
+      - xpack.monitoring.enabled=true
+      - xpack.ml.enabled=false
+      - xpack.graph.enabled=false
+      - xpack.reporting.enabled=false
+      - xpack.grokdebugger.enabled=false
+    ports:
+      - "5601:5601"
     networks:
-      - elastcinetwork
+      - elastic
+    depends_on:
+      - elasticsearch
 
-networks:
-  elastcinetwork:
-    driver: bridge
+  head:
+    image: mobz/elasticsearch-head:5
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    mem_limit: 1g
+    ports:
+      - "9100:9100"
+    networks:
+      - elastic 
 
 volumes:
+  esdata1:
+    driver: local
+  esdata2:
+    driver: local
   elasticsearch-data:
+  #esconfig1:
+  #  driver: local
+  #esconfig2:
+  #  driver: local
+
+networks:
+  elastic:
+    driver: bridge

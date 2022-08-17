@@ -21,7 +21,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet(Name = "GetProducts")]
-    public async Task<IActionResult> Get(string keyword)
+    public async Task<IActionResult> Get(string? keyword)
     {
         var results = await _elasticClient.SearchAsync<Product>(
             s => s.Query(

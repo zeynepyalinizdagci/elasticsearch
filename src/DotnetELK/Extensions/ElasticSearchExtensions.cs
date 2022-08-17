@@ -32,8 +32,10 @@ public static class ElasticSearchExtensions
                         .Ignore(x => x.Quantity));
     }
 
+
     private static void CreateIndex(IElasticClient client, string indexName)
     {
         client.Indices.Create(indexName, i => i.Map<Product>(x => x.AutoMap()));
+        client.Indices.Create("category", i => i.Map<Category>(x => x.AutoMap()));
     } 
 }
