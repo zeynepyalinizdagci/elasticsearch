@@ -1,5 +1,6 @@
 using System.Reflection;
 using DotnetELK.Extensions;
+using DotnetELK.Services;
 using Serilog;
 using Serilog.Exceptions;
 using Serilog.Sinks.Elasticsearch;
@@ -17,6 +18,17 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddElasticSearch(builder.Configuration);
+//builder.Services.AddTransient<IProductService, ProductService>();
+
+// Add services to the container.
+builder.Services.AddGrpc();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("cors", policy =>
+    {
+        policy.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin().WithExposedHeaders("Grpc-Status", "Grpc-Message", "Grpc-Encoding", "Grpc-Accept-Encoding");
+    });
+});
 
 var app = builder.Build();
 

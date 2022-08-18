@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+option csharp_namespace = "myDummyGrpcService.Protos";
+
+package shift_planning_tool.shifts.v1;
+
+import "google/protobuf/timestamp.proto";
+
+enum Windfarm {
+    WINDFARM_UNSPECIFIED = 0;
+    WINDFARM_ARKONA = 1;
+    WINDFARM_RAMPION = 2;
+}
+
+message GetAvailableTechnicianRequest {
+    google.protobuf.Timestamp start_date = 1;
+    google.protobuf.Timestamp end_date = 2;
+    Windfarm windfarm = 3;
+}
+
+message TechnicianAvailability {
+    uint32 available_technicians = 1;
+}
+
+message GetAvailableTechnicianResponse {
+    google.protobuf.Timestamp start_date = 1;
+
+    // key of the map represents an offset relative to the start_date
+    // because messages are not allowed as map keys
+    map<uint32, TechnicianAvailability> availability_per_day = 2;
+}
+
+service ShiftsService {
+    rpc GetAvailableTechnician(GetAvailableTechnicianRequest) returns (GetAvailableTechnicianResponse);
+}

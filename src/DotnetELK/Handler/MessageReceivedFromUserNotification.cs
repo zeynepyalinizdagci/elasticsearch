@@ -1,7 +1,7 @@
 ﻿using MediatR;
 namespace DotnetELK.Handler
 {
-    public class MessageReceivedFromUserNotification : IAsyncNotification
+    public class MessageReceivedFromUserNotification 
     {
         public DateTime SubmittedAt { get; set; }
         public string FullName { get; set; }

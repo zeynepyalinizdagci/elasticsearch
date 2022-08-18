@@ -1,4 +1,5 @@
 using DotnetELK.Models;
+using DotnetELK.Services;
 using Microsoft.AspNetCore.Mvc;
 using Nest;
 
@@ -10,6 +11,7 @@ public class ProductsController : ControllerBase
 {
     private readonly IElasticClient _elasticClient;
     private readonly ILogger<ProductsController> _logger;
+    
 
     public ProductsController(
         IElasticClient elasticClient,
@@ -18,6 +20,7 @@ public class ProductsController : ControllerBase
     {
         _elasticClient = elasticClient;
         _logger = logger;
+       
     }
 
     [HttpGet(Name = "GetProducts")]
@@ -26,7 +29,7 @@ public class ProductsController : ControllerBase
         var results = await _elasticClient.SearchAsync<Product>(
             s => s.Query(
                 q => q.QueryString(
-                    d => d.Query('*'+keyword+'*')
+                    d => d.Query('*' + keyword + '*')
                 )
             ).Size(1000)
         );
@@ -40,4 +43,6 @@ public class ProductsController : ControllerBase
         await _elasticClient.IndexDocumentAsync(product);
         return Ok();
     }
+    
+
 }
