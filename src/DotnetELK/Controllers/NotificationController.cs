@@ -24,9 +24,9 @@ namespace DotnetELK.Controllers
                 EmailAddress = "EmailAddress",
                 FullName = ".FullName",
                 Message = "contactUs.Message",
-                SubmittedAt = DateTime.Now
+                SubmittedAt = DateTime.UtcNow
             };
-            await _mediator .Publish(messageReceivedFromUserNotification);
+            await _mediator.Publish(messageReceivedFromUserNotification);
             return Ok();
         }
 
@@ -56,7 +56,7 @@ namespace DotnetELK.Controllers
                     client.AuthenticationMechanisms.Remove("XOAUTH2");
 
                     // Note: only needed if the SMTP server requires authentication
-                   await client.AuthenticateAsync("campaignplanningtool@gmail.com", "dyukomlrbenwvrff");
+                   await client.AuthenticateAsync("my-gmail@gmail.com", "dyukomlrbenwvrff");
 
                     await client.SendAsync(message);
                     client.Disconnect(true);
